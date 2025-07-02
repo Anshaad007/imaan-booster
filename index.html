@@ -328,6 +328,7 @@
         <button onclick="exportToPDF()">
           ⬇️ Download Today's Checklist as PDF
         </button>
+        <button onclick="showWeekReport()">📊 Report of Week</button>
         <div class="about-btn-wrapper">
           <button class="about-btn-small" onclick="showAbout()">👤</button>
         </div>
@@ -355,6 +356,12 @@
       <h3>🕋 Hadith of the Day</h3>
       <div id="hadith-content"></div>
       <button onclick="closeHadith()">Close</button>
+    </div>
+    <!-- Week Report Popup -->
+    <div id="week-report-popup" class="popup">
+      <h3>📊 Weekly Report</h3>
+      <div id="week-report-content"></div>
+      <button onclick="closeWeekReport()">Close</button>
     </div>
 
     <!-- About Us Popup -->
@@ -748,6 +755,22 @@
       }
       function closeAbout() {
         document.getElementById("about-popup").style.display = "none";
+      }
+      function showWeekReport() {
+        let report = "";
+        for (let d = Math.max(1, currentDay - 6); d <= currentDay; d++) {
+          let completed = 0;
+          staticChecklist.forEach((_, idx) => {
+            if (localStorage.getItem(`day${d}_task${idx}`) === "true")
+              completed++;
+          });
+          report += `Day ${d}: <b>${completed}/${staticChecklist.length}</b> tasks completed<br>`;
+        }
+        document.getElementById("week-report-content").innerHTML = report;
+        document.getElementById("week-report-popup").style.display = "block";
+      }
+      function closeWeekReport() {
+        document.getElementById("week-report-popup").style.display = "none";
       }
     </script>
   </body>
