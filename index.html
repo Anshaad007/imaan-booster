@@ -1,0 +1,754 @@
+<!--
+  index.html - Imaan Daily Checklist App
+  -------------------------------------
+  This is the main HTML file for the Imaan Daily Checklist web app.
+
+  Features:
+  - Modern, Islamic-inspired daily checklist for spiritual growth
+  - Daily Ayah and Hadith popups for inspiration
+  - Progress tracking, streaks, motivational quotes, and notes
+  - Export checklist as PDF
+  - About Us popup with developer info
+  - Beautiful Kaaba background and uplifting color palette
+  - Fully responsive and mobile-friendly design
+
+  Author: Muhammed Anshad
+  Last updated: July 2, 2025
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Imaan Daily Checklist</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e0f7fa 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 0;
+        background: url("https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=1200&q=80")
+          center center/cover no-repeat;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: rgba(255, 255, 255, 0.98);
+        padding: 32px 24px 90px 24px; /* Add extra bottom padding for bottom nav */
+        border-radius: 22px;
+        box-shadow: 0 8px 32px rgba(33, 150, 243, 0.08),
+          0 1.5px 8px rgba(76, 175, 80, 0.04);
+        position: relative;
+        z-index: 1;
+      }
+
+      h1 {
+        text-align: center;
+        color: #009688;
+        margin-bottom: 10px;
+        font-size: 2.1rem;
+        letter-spacing: 1px;
+      }
+
+      h3 {
+        text-align: center;
+        color: #1976d2;
+        font-weight: 400;
+        margin-bottom: 25px;
+      }
+
+      .task {
+        display: flex;
+        align-items: center;
+        background-color: #e3fcec;
+        border-radius: 14px;
+        padding: 12px 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 4px rgba(33, 150, 243, 0.06);
+        transition: background 0.3s;
+      }
+
+      .task:hover {
+        background-color: #e3f2fd;
+      }
+
+      .task input {
+        margin-right: 14px;
+        transform: scale(1.2);
+        accent-color: #009688;
+      }
+
+      .task label {
+        font-size: 16px;
+        color: #1976d2;
+      }
+
+      .button-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+      .reset-bottom {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 64px;
+        z-index: 12;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+      }
+      .reset-bottom button {
+        pointer-events: auto;
+        background: linear-gradient(90deg, #fffde7 0%, #ffe082 100%);
+        color: #795548;
+        border-radius: 18px;
+        font-size: 1.1em;
+        padding: 14px 36px;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+        font-weight: 600;
+        border: none;
+        margin-bottom: 8px;
+      }
+      .reset-bottom button:hover {
+        background: linear-gradient(90deg, #ffe082 0%, #fffde7 100%);
+        color: #009688;
+      }
+      .bottom-nav {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        z-index: 10;
+        padding: 0 2px 18px 2px; /* Even less horizontal padding for desktop */
+        pointer-events: none;
+      }
+      .bottom-nav button {
+        min-width: 140px;
+        pointer-events: auto;
+      }
+      @media (max-width: 600px) {
+        html {
+          font-size: 17px;
+        }
+        .container {
+          max-width: 98vw;
+          margin: 10px 1vw 80px 1vw;
+          padding: 18px 4vw 110px 4vw; /* More bottom padding for mobile nav */
+          border-radius: 12px;
+        }
+        .button-bar {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .reset-bottom {
+          bottom: 62px;
+        }
+        .reset-bottom button {
+          width: 90vw;
+          font-size: 1.1em;
+          padding: 14px 0;
+        }
+        .bottom-nav {
+          padding: 0 1vw 12px 1vw; /* Minimum horizontal padding for mobile */
+        }
+        button {
+          font-size: 1.1em;
+          padding: 14px 0;
+          min-width: 90vw;
+        }
+        .task {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 10px 8px;
+        }
+        .task label {
+          font-size: 1.1em;
+        }
+      }
+
+      button {
+        background: linear-gradient(90deg, #b2ebf2 0%, #fffde7 100%);
+        color: #00695c;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+        transition: background 0.3s, color 0.3s;
+      }
+
+      button:hover {
+        background: linear-gradient(90deg, #fffde7 0%, #b2ebf2 100%);
+        color: #1976d2;
+      }
+
+      /* PDF button style for distinction */
+      .reset-button button:last-child {
+        background: linear-gradient(90deg, #fffde7 0%, #ffe082 100%);
+        color: #795548;
+      }
+      .reset-button button:last-child:hover {
+        background: linear-gradient(90deg, #ffe082 0%, #fffde7 100%);
+        color: #009688;
+      }
+
+      /* Popup styles */
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #f9fbe7;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(33, 150, 243, 0.13);
+        padding: 32px 24px;
+        z-index: 1000;
+        min-width: 300px;
+        max-width: 90vw;
+      }
+      .popup h3 {
+        color: #009688;
+        margin-bottom: 10px;
+      }
+      .popup div {
+        color: #1976d2;
+        margin-bottom: 18px;
+      }
+      .popup button {
+        background: #b2ebf2;
+        color: #00695c;
+        border-radius: 8px;
+      }
+      .popup button:hover {
+        background: #fffde7;
+        color: #1976d2;
+      }
+
+      /* About Us Popup */
+      .about-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #f9fbe7;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(33, 150, 243, 0.13);
+        padding: 32px 24px;
+        z-index: 2000;
+        min-width: 300px;
+        max-width: 90vw;
+        text-align: center;
+      }
+      .about-popup h3 {
+        color: #009688;
+        margin-bottom: 10px;
+      }
+      .about-popup p {
+        color: #1976d2;
+        margin-bottom: 10px;
+      }
+      .about-popup button {
+        background: #b2ebf2;
+        color: #00695c;
+        border-radius: 8px;
+        margin-top: 10px;
+      }
+      .about-popup button:hover {
+        background: #fffde7;
+        color: #1976d2;
+      }
+
+      /* Small About button style */
+      .about-btn-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 2px;
+      }
+      .about-btn-small {
+        background: #e3f2fd;
+        color: #1976d2;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        font-size: 1.3em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 4px rgba(33, 150, 243, 0.1);
+        border: none;
+        margin: 0 auto;
+        padding: 0;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+      }
+      .about-btn-small:hover {
+        background: #b2ebf2;
+        color: #009688;
+      }
+      @media (max-width: 600px) {
+        .about-btn-small {
+          width: 38px;
+          height: 38px;
+          font-size: 1.3em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="button-bar">
+        <button onclick="showAyah()">📖 Daily Ayah</button>
+        <button onclick="showHadith()">🕋 Daily Hadith</button>
+        <button onclick="exportToPDF()">
+          ⬇️ Download Today's Checklist as PDF
+        </button>
+        <div class="about-btn-wrapper">
+          <button class="about-btn-small" onclick="showAbout()">👤</button>
+        </div>
+      </div>
+      <h1>🕌 Imaan Booster - Day <span id="day-number">1</span></h1>
+      <h3 id="daily-goal">Loading daily goal...</h3>
+
+      <div id="checklist"></div>
+    </div>
+    <div class="reset-bottom">
+      <button onclick="resetToday()">🔄 Reset Today's Checklist</button>
+    </div>
+    <div class="bottom-nav">
+      <button onclick="prevDay()">⬅️ Previous</button>
+      <button onclick="nextDay()">Next ➡️</button>
+    </div>
+
+    <!-- Popups for Ayah and Hadith -->
+    <div id="ayah-popup" class="popup">
+      <h3>🌙 Ayah of the Day</h3>
+      <div id="ayah-content"></div>
+      <button onclick="closeAyah()">Close</button>
+    </div>
+    <div id="hadith-popup" class="popup">
+      <h3>🕋 Hadith of the Day</h3>
+      <div id="hadith-content"></div>
+      <button onclick="closeHadith()">Close</button>
+    </div>
+
+    <!-- About Us Popup -->
+    <div id="about-popup" class="about-popup">
+      <h3>About This App</h3>
+      <p>
+        This Imaan Booster app was created to help you build daily Islamic
+        habits and stay motivated on your journey.
+      </p>
+      <p><b>Developer:</b> Muhammed Anshad</p>
+      <p>
+        <b>Email:</b>
+        <a
+          href="mailto:mhdanshadkt@gmail.com"
+          style="color: #82a3e5; text-decoration: underline"
+          >mhdanshadkt@gmail.com</a
+        >
+      </p>
+      <button onclick="closeAbout()">Close</button>
+    </div>
+
+    <script>
+      const dailyGoals = [
+        "Pray all 5 salah on time",
+        "Read Quran 10 minutes after Fajr",
+        "Say Astaghfirullah 100x today",
+        "Lower your gaze at college today",
+        "Watch 1 Islamic video after Asr",
+        "Do evening Adhkar before sleeping",
+        "Thank Allah for 3 things at night",
+        "Avoid gossip and useless talk",
+        "Reflect on your purpose today",
+        "Help someone without being asked",
+        "Send 100 salawat on the Prophet ﷺ",
+        "Make sincere du'a after each prayer",
+        "Fast or skip distractions today",
+        "Make istighfar 50x after Maghrib",
+        "Memorize a du’a today",
+        "Speak kindly all day",
+        "Avoid music — listen to Quran",
+        "Read one Seerah story",
+        "Pray 2 rakah Sunnah mindfully",
+        "Say Bismillah before every task",
+        "Be kind to your parents today",
+        "Pray Fajr and stay awake",
+        "Avoid all arguments today",
+        "Write a du’a for yourself",
+        "Recite Surah Mulk before sleep",
+        "Make du’a before Maghrib (Friday)",
+        "Reflect on one heart change",
+        "Plan a long-term good habit",
+        "Wake for Tahajjud if possible",
+        "Thank Allah for your progress",
+      ];
+
+      const staticChecklist = [
+        "Fajr + Morning Dhikr",
+        "Quran (6:00–6:30 AM)",
+        "Du'a (post-breakfast)",
+        "Dhuhr + Dhikr",
+        "Asr (4:00 PM)",
+        "Reminder video/reading",
+        "Maghrib",
+        "Isha",
+        "Evening Adhkar (post-Isha)",
+        "Sleep by 10 PM",
+      ];
+
+      let currentDay = parseInt(localStorage.getItem("currentDay")) || 1;
+
+      function loadChecklist(day) {
+        document.getElementById("day-number").innerText = day;
+        document.getElementById("daily-goal").innerText = dailyGoals[day - 1];
+
+        const checklistDiv = document.getElementById("checklist");
+        checklistDiv.innerHTML = "";
+
+        staticChecklist.forEach((task, index) => {
+          const checkboxId = `day${day}_task${index}`;
+          const isChecked = localStorage.getItem(checkboxId) === "true";
+
+          const taskDiv = document.createElement("div");
+          taskDiv.className = "task";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = isChecked;
+          checkbox.onchange = () => {
+            localStorage.setItem(checkboxId, checkbox.checked);
+          };
+
+          const label = document.createElement("label");
+          label.textContent = task;
+
+          taskDiv.appendChild(checkbox);
+          taskDiv.appendChild(label);
+          checklistDiv.appendChild(taskDiv);
+        });
+
+        localStorage.setItem("currentDay", day);
+      }
+
+      function nextDay() {
+        if (currentDay < 30) {
+          currentDay++;
+          loadChecklist(currentDay);
+        }
+      }
+
+      function prevDay() {
+        if (currentDay > 1) {
+          currentDay--;
+          loadChecklist(currentDay);
+        }
+      }
+
+      function resetToday() {
+        staticChecklist.forEach((_, index) => {
+          const checkboxId = `day${currentDay}_task${index}`;
+          localStorage.removeItem(checkboxId);
+        });
+        loadChecklist(currentDay);
+      }
+
+      // Initial load
+      loadChecklist(currentDay);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+      // Function to export checklist as PDF
+      function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFont("Helvetica", "normal");
+        doc.setFontSize(16);
+        doc.text(`Imaan Booster - Day ${currentDay}`, 20, 20);
+        doc.setFontSize(12);
+        doc.text(dailyGoals[currentDay - 1], 20, 30);
+
+        staticChecklist.forEach((task, index) => {
+          const checkboxId = `day${currentDay}_task${index}`;
+          const isChecked = localStorage.getItem(checkboxId) === "true";
+          const status = isChecked ? "✔️" : "❌";
+          doc.text(`${status} ${task}`, 20, 40 + index * 10);
+        });
+
+        doc.save(`Imaan_Booster_Day_${currentDay}.pdf`);
+      }
+
+      // Add daily ayahs and explanations
+      const dailyAyahs = [
+        {
+          ayah: "Indeed, prayer prohibits immorality and wrongdoing.",
+          ref: "Quran 29:45",
+          explanation:
+            "This ayah reminds us that regular prayer helps protect us from bad actions and keeps our hearts pure.",
+        },
+        {
+          ayah: "So remember Me; I will remember you.",
+          ref: "Quran 2:152",
+          explanation:
+            "When we remember Allah through dhikr and gratitude, He blesses us with His remembrance and care.",
+        },
+        {
+          ayah: "And seek help through patience and prayer.",
+          ref: "Quran 2:45",
+          explanation:
+            "In times of difficulty, patience and prayer are our strongest tools for finding relief and guidance.",
+        },
+        {
+          ayah: "Allah does not burden a soul beyond that it can bear.",
+          ref: "Quran 2:286",
+          explanation:
+            "Whatever challenge you face, know that Allah believes you are strong enough to handle it.",
+        },
+        {
+          ayah: "Verily, in the remembrance of Allah do hearts find rest.",
+          ref: "Quran 13:28",
+          explanation:
+            "True peace and comfort come from remembering Allah, especially in times of stress or sadness.",
+        },
+        {
+          ayah: "And your Lord is going to give you, and you will be satisfied.",
+          ref: "Quran 93:5",
+          explanation:
+            "Trust that Allah has good things planned for you, even if you can't see them yet.",
+        },
+        {
+          ayah: "And We have not sent you, [O Muhammad], except as a mercy to the worlds.",
+          ref: "Quran 21:107",
+          explanation:
+            "The Prophet ﷺ was sent as a mercy for all, so we should strive to be merciful in our own lives.",
+        },
+        {
+          ayah: "And He found you lost and guided [you].",
+          ref: "Quran 93:7",
+          explanation:
+            "No matter how lost we feel, Allah can always guide us back to the right path.",
+        },
+        {
+          ayah: "Do not lose hope, nor be sad.",
+          ref: "Quran 3:139",
+          explanation:
+            "Stay hopeful and positive, even when things are tough—Allah is always with you.",
+        },
+        {
+          ayah: "Whoever puts his trust in Allah, He will be enough for him.",
+          ref: "Quran 65:3",
+          explanation:
+            "Relying on Allah brings contentment and strength, no matter the situation.",
+        },
+        {
+          ayah: "Kind words and forgiveness are better than charity followed by injury.",
+          ref: "Quran 2:263",
+          explanation:
+            "Being kind and forgiving is more valuable than giving charity with harshness or reminders.",
+        },
+        {
+          ayah: "And He is with you wherever you are.",
+          ref: "Quran 57:4",
+          explanation:
+            "Allah is always close, no matter where you are or what you're going through.",
+        },
+        {
+          ayah: "And whoever fears Allah - He will make for him a way out.",
+          ref: "Quran 65:2",
+          explanation:
+            "If you are mindful of Allah, He will always provide a solution to your problems.",
+        },
+        {
+          ayah: "And whoever relies upon Allah - then He is sufficient for him.",
+          ref: "Quran 65:3",
+          explanation:
+            "Trusting Allah means you have everything you need, even when things seem uncertain.",
+        },
+        {
+          ayah: "And say: My Lord, increase me in knowledge.",
+          ref: "Quran 20:114",
+          explanation:
+            "Always ask Allah to help you grow in knowledge and understanding.",
+        },
+        {
+          ayah: "And your Lord is Forgiving, Full of Mercy.",
+          ref: "Quran 18:58",
+          explanation:
+            "No matter how many mistakes you make, Allah's forgiveness and mercy are always available.",
+        },
+        {
+          ayah: "And be patient, for indeed, Allah does not allow to be lost the reward of those who do good.",
+          ref: "Quran 11:115",
+          explanation:
+            "Patience in doing good is always rewarded by Allah, even if you don't see it right away.",
+        },
+        {
+          ayah: "And whoever does righteous deeds, whether male or female, while being a believer - those will enter Paradise.",
+          ref: "Quran 4:124",
+          explanation:
+            "Paradise is promised to all believers who do good, regardless of gender or background.",
+        },
+        {
+          ayah: "And speak to people good [words]...",
+          ref: "Quran 2:83",
+          explanation:
+            "Speaking kindly to others is a simple but powerful way to spread goodness.",
+        },
+        {
+          ayah: "And the servants of the Most Merciful are those who walk upon the earth easily...",
+          ref: "Quran 25:63",
+          explanation:
+            "True believers are gentle and humble in their actions and interactions.",
+        },
+        {
+          ayah: "And your Lord says, 'Call upon Me; I will respond to you.'",
+          ref: "Quran 40:60",
+          explanation:
+            "Never hesitate to make du'a—Allah promises to listen and respond.",
+        },
+        {
+          ayah: "And We have certainly made the Quran easy for remembrance, so is there any who will remember?",
+          ref: "Quran 54:17",
+          explanation:
+            "The Quran is accessible for all to learn and remember, so take time to connect with it.",
+        },
+        {
+          ayah: "And whoever does an atom's weight of good will see it.",
+          ref: "Quran 99:7",
+          explanation:
+            "Every small good deed counts and will be rewarded by Allah.",
+        },
+        {
+          ayah: "And Allah is the best of providers.",
+          ref: "Quran 62:11",
+          explanation:
+            "Trust that your sustenance comes from Allah, and He provides in the best way.",
+        },
+        {
+          ayah: "And Allah is with the patient.",
+          ref: "Quran 2:153",
+          explanation:
+            "Patience brings Allah's support and closeness in your life.",
+        },
+        {
+          ayah: "And Allah loves the doers of good.",
+          ref: "Quran 3:134",
+          explanation:
+            "Strive to do good, because Allah loves those who act with kindness and generosity.",
+        },
+        {
+          ayah: "And Allah is Forgiving and Merciful.",
+          ref: "Quran 2:218",
+          explanation:
+            "No matter your past, Allah's forgiveness and mercy are always open to you.",
+        },
+        {
+          ayah: "And Allah is the best of planners.",
+          ref: "Quran 8:30",
+          explanation:
+            "Even when things don't go as planned, trust that Allah's plan is always best.",
+        },
+        {
+          ayah: "And Allah is over all things competent.",
+          ref: "Quran 2:284",
+          explanation:
+            "Allah is capable of anything—never doubt His power to help you.",
+        },
+        {
+          ayah: "And Allah is the best of helpers.",
+          ref: "Quran 3:150",
+          explanation:
+            "Whenever you need help, turn to Allah first—He is the best helper.",
+        },
+      ];
+      // Add daily hadiths
+      const dailyHadiths = [
+        "The best among you are those who have the best manners and character. (Bukhari)",
+        "Actions are judged by intentions. (Bukhari)",
+        "The most beloved deeds to Allah are those done regularly, even if they are small. (Bukhari)",
+        "None of you truly believes until he loves for his brother what he loves for himself. (Bukhari)",
+        "Whoever believes in Allah and the Last Day should speak good or remain silent. (Bukhari)",
+        "He who does not show mercy to others will not be shown mercy. (Bukhari)",
+        "The strong man is not the one who can overpower others, but the one who controls himself when angry. (Bukhari)",
+        "Make things easy and do not make them difficult. (Bukhari)",
+        "Whoever does not thank people has not thanked Allah. (Abu Dawood)",
+        "The best of you are those who learn the Qur’an and teach it. (Bukhari)",
+        "Whoever guides someone to goodness will have a reward like one who did it. (Muslim)",
+        "Allah is gentle and loves gentleness in all matters. (Bukhari)",
+        "A good word is charity. (Bukhari)",
+        "Feed the hungry, visit the sick, and free the captive. (Bukhari)",
+        "Smiling in the face of your brother is charity. (Tirmidhi)",
+        "The best among you are those who are best to their families. (Tirmidhi)",
+        "Whoever believes in Allah and the Last Day, let him maintain the bonds of kinship. (Bukhari)",
+        "The best richness is the richness of the soul. (Bukhari)",
+        "The best of you are those who are best in paying off their debts. (Bukhari)",
+        "The best of you are those who are best to their wives. (Tirmidhi)",
+        "The best of you are those who feed others. (Ahmad)",
+        "The best of you are those who are best in character. (Bukhari)",
+        "The best of you are those who are best in learning the Quran. (Bukhari)",
+        "The best of you are those who are best to the poor. (Bukhari)",
+        "Whoever removes a worldly grief from a believer, Allah will remove from him one of the griefs of the Day of Judgment. (Muslim)",
+        "None of you truly believes until he wishes for his brother what he wishes for himself. (Bukhari & Muslim)",
+        "Whoever covers a Muslim, Allah will cover him in the world and the Hereafter. (Muslim)",
+        "The most beloved people to Allah are those who are most beneficial to people. (Tabarani)",
+        "Whoever follows a path in pursuit of knowledge, Allah will make a path to Paradise easy for him. (Muslim)",
+        "Exchange gifts, as that will lead to increasing your love to one another. (Bukhari)",
+        "The best among you are those who are best to their families. (Tirmidhi)",
+        "The best richness is the richness of the soul. (Bukhari)",
+        "The best of you are those who are best in paying off their debts. (Bukhari)",
+      ];
+      function showAyah() {
+        const idx = (currentDay - 1) % dailyAyahs.length;
+        const ayah = dailyAyahs[idx];
+        document.getElementById(
+          "ayah-content"
+        ).innerHTML = `<b>${ayah.ayah}</b><br><span style='color:#26a69a;'>${ayah.ref}</span><br><i>${ayah.explanation}</i>`;
+        document.getElementById("ayah-popup").style.display = "block";
+      }
+      function closeAyah() {
+        document.getElementById("ayah-popup").style.display = "none";
+      }
+      function showHadith() {
+        const idx = (currentDay - 1) % dailyHadiths.length;
+        document.getElementById("hadith-content").innerHTML = dailyHadiths[idx];
+        document.getElementById("hadith-popup").style.display = "block";
+      }
+      function closeHadith() {
+        document.getElementById("hadith-popup").style.display = "none";
+      }
+      function showAbout() {
+        document.getElementById("about-popup").style.display = "block";
+      }
+      function closeAbout() {
+        document.getElementById("about-popup").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
